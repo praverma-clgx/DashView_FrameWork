@@ -1,8 +1,5 @@
 import { test, expect } from '../../../fixtures/enterpriseFixtures.js';
 import { ResetPurchaseOrderPage } from '../../../pageObjects/enterprise/administrationFG/resetPurchaseOrder.po.js';
-import { isEvans} from '../../../utils/testTags.js';
-
-test.skip(isEvans(), 'Skip in Evans Environment');
 
 
 test('Reset Purchase Order Page', async ({ authenticatedPage }) => {

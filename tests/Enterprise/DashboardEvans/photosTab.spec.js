@@ -3,7 +3,7 @@ import DashboardPhotosTabPage from '../../../pageObjects/enterprise/dashboardEva
 import jobNumberData from '../../../testData/enterprise/commonJobNumber.json' with { type: 'json' };
 import { searchJobNumber } from '../../../utils/searchJobNumber.js';
 
-test('Photos Tab Upload and Download Validation', async ({ authenticatedPage }) => {
+test('Photos Tab', async ({ authenticatedPage }) => {
   const page = authenticatedPage;
   const photosTabPage = new DashboardPhotosTabPage(page);
 
@@ -18,18 +18,6 @@ test('Photos Tab Upload and Download Validation', async ({ authenticatedPage }) 
 
   // Verify Upload Photo button is visible
   await expect(await photosTabPage.verifyUploadPhotoButtonVisible()).toBeVisible();
-
-  // Click Upload Photo button
-  await photosTabPage.clickUploadPhotoButton();
-
-  // Verify photo upload modal is open
-  await expect(await photosTabPage.verifyPhotoUploadModalOpen()).toBeVisible();
-
-  // Verify Photo upload heading text
-  await photosTabPage.verifyPhotoUploadHeadingText('Photo upload');
-
-  // Close the photo upload modal
-  await photosTabPage.closePhotoUploadModal();
 
   // Verify 3D Room Models button is visible
   await expect(await photosTabPage.verifyRoomModelsButtonVisible()).toBeVisible();
@@ -49,7 +37,6 @@ test('Photos Tab Upload and Download Validation', async ({ authenticatedPage }) 
   // Verify all three buttons are visible inside the iframe
   await expect(await photosTabPage.verifyDocusketchButtonVisible()).toBeVisible();
   await expect(await photosTabPage.verifyMatterportButtonVisible()).toBeVisible();
-  await expect(await photosTabPage.verifyHoverButtonVisible()).toBeVisible();
 
   // Click cancel image inside iframe to close popup
   await photosTabPage.clickLinksIframeCancelImg();

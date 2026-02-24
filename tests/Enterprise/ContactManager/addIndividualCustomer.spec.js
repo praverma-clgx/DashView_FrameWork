@@ -3,7 +3,7 @@ import AddIndividualCustomerPage from '../../../pageObjects/enterprise/contactMa
 import addIndividualCustomerData from '../../../testData/enterprise/enterpriseContactManager/addIndividualCustomer.json' with { type: 'json' };
 import { getRandomNumber } from '../../../utils/randomNumber.js';
 
-test.skip('Add new Individual Customer in Contact Manager', async ({ authenticatedPage }) => {
+test('Assert Add Individual Customer', async ({ authenticatedPage }) => {
   const addIndividualCustomerPage = new AddIndividualCustomerPage(authenticatedPage);
 
   // Hover on Contact Manager and click Individuals

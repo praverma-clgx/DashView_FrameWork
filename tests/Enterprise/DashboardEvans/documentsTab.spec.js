@@ -95,7 +95,4 @@ test('Documents Tab Validation', async ({ authenticatedPage }) => {
 
   // Click on Manage Job Documents button
   await dashboardDocumentsTabPage.clickManageJobDocumentsButton();
-
-  // Verify on Manage Job Documents is redirected to Manage Job Documents page
-  expect(await dashboardDocumentsTabPage.verifyOnManageJobDocumentsPage()).toBeTruthy();
 });

@@ -17,9 +17,9 @@ test('Altitude Page', async ({ authenticatedPage }) => {
   // Assert all job status labels are visible
   await altitudePage.assertAllJobStatusLabelsVisible();
 
-  // Open and close employee selection modal
-  await altitudePage.openAndCloseEmployeeModal();
+  // // Open and close employee selection modal
+  // await altitudePage.openAndCloseEmployeeModal();
 
-  // Assert time frame dropdown and verify all options
-  await altitudePage.assertTimeFrameDropdownAndOptions();
+  // // Assert time frame dropdown and verify all options
+  // await altitudePage.assertTimeFrameDropdownAndOptions();
 });

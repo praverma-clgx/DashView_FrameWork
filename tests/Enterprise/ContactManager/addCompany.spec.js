@@ -3,7 +3,7 @@ import AddCompanyPage from '../../../pageObjects/enterprise/contactManager/addCo
 import { getRandomNumber } from '../../../utils/randomNumber.js';
 import addCompanyData from '../../../testData/enterprise/enterpriseContactManager/AddCompanyData.json' with { type: 'json' };
 
-test.skip('Verify add new company functionality', async ({ authenticatedPage }) => {
+test('Assert add new company functionality', async ({ authenticatedPage }) => {
   const page = authenticatedPage;
   const addCompanyPage = new AddCompanyPage(page);
 

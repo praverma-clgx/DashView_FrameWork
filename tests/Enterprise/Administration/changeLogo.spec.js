@@ -1,8 +1,6 @@
 import { test, expect } from '../../../fixtures/enterpriseFixtures.js';
 import ChangeLogoPage from '../../../pageObjects/enterprise/administrationFG/changeLogo.po.js';
-import { isFirstGeneral} from '../../../utils/testTags.js';
 
-test.skip(isFirstGeneral(), 'Skip in First General Environment');
 
 test('Change Logo Page', async ({ authenticatedPage }) => {
   const page = authenticatedPage;
