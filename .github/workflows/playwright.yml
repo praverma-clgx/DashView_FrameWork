@@ -1,16 +1,26 @@
-name: Playwright Tests
+name: Playwright Tests (Manual Only)
 
 on:
-  push:
-    branches: [main, develop, master]
-  pull_request:
-    branches: [main, develop, master]
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch: # Only allow manual trigger
+    inputs:
+      environment:
+        description: 'Environment to test'
+        required: true
+        default: 'first_general'
+        type: choice
+        options:
+        - first_general
+        - paul_devis  
+        - service_master
+        - evans
 
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    
+    # Only run if manually triggered
+    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout code
@@ -30,11 +40,24 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "TEST_ENV=${{ secrets.TEST_ENV }}" >> .env
-          echo "DKIRC_ENTERPRISE_LOGIN_URL=${{ secrets.DKIRC_ENTERPRISE_LOGIN_URL }}" >> .env
-          echo "DKIRC_ENTERPRISE_COMPANY_ID=${{ secrets.DKIRC_ENTERPRISE_COMPANY_ID }}" >> .env
-          echo "DKIRC_ENTERPRISE_USERNAME=${{ secrets.DKIRC_ENTERPRISE_USERNAME }}" >> .env
-          echo "DKIRC_ENTERPRISE_PASSWORD=${{ secrets.DKIRC_ENTERPRISE_PASSWORD }}" >> .env
+          echo "TEST_ENV=${{ github.event.inputs.environment }}" >> .env
+          echo "FIRST_GENERAL_ENTERPRISE_LOGIN_URL=${{ secrets.FIRST_GENERAL_ENTERPRISE_LOGIN_URL }}" >> .env
+          echo "FIRST_GENERAL_ENTERPRISE_COMPANY_ID=${{ secrets.FIRST_GENERAL_ENTERPRISE_COMPANY_ID }}" >> .env
+          echo "FIRST_GENERAL_ENTERPRISE_USERNAME=${{ secrets.FIRST_GENERAL_ENTERPRISE_USERNAME }}" >> .env
+          echo "FIRST_GENERAL_ENTERPRISE_PASSWORD=${{ secrets.FIRST_GENERAL_ENTERPRISE_PASSWORD }}" >> .env
+          echo "PAUL_DEVIS_ENTERPRISE_LOGIN_URL=${{ secrets.PAUL_DEVIS_ENTERPRISE_LOGIN_URL }}" >> .env
+          echo "PAUL_DEVIS_ENTERPRISE_COMPANY_ID=${{ secrets.PAUL_DEVIS_ENTERPRISE_COMPANY_ID }}" >> .env
+          echo "PAUL_DEVIS_ENTERPRISE_USERNAME=${{ secrets.PAUL_DEVIS_ENTERPRISE_USERNAME }}" >> .env
+          echo "PAUL_DEVIS_ENTERPRISE_PASSWORD=${{ secrets.PAUL_DEVIS_ENTERPRISE_PASSWORD }}" >> .env
+          echo "SERVICE_MASTER_ENTERPRISE_LOGIN_URL=${{ secrets.SERVICE_MASTER_ENTERPRISE_LOGIN_URL }}" >> .env
+          echo "SERVICE_MASTER_ENTERPRISE_COMPANY_ID=${{ secrets.SERVICE_MASTER_ENTERPRISE_COMPANY_ID }}" >> .env
+          echo "SERVICE_MASTER_ENTERPRISE_USERNAME=${{ secrets.SERVICE_MASTER_ENTERPRISE_USERNAME }}" >> .env
+          echo "SERVICE_MASTER_ENTERPRISE_PASSWORD=${{ secrets.SERVICE_MASTER_ENTERPRISE_PASSWORD }}" >> .env
+          echo "EVANS_ENTERPRISE_LOGIN_URL=${{ secrets.EVANS_ENTERPRISE_LOGIN_URL }}" >> .env
+          echo "EVANS_ENTERPRISE_COMPANY_ID=${{ secrets.EVANS_ENTERPRISE_COMPANY_ID }}" >> .env
+          echo "EVANS_ENTERPRISE_USERNAME=${{ secrets.EVANS_ENTERPRISE_USERNAME }}" >> .env
+          echo "EVANS_ENTERPRISE_PASSWORD=${{ secrets.EVANS_ENTERPRISE_PASSWORD }}" >> .env
+
       - name: Run Playwright tests
         run: npm run test
         env:
@@ -44,7 +67,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-report
+          name: playwright-report-${{ github.event.inputs.environment }}
           path: playwright-report/
           retention-days: 30
 
@@ -52,6 +75,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results
+          name: test-results-${{ github.event.inputs.environment }}
           path: test-results/
           retention-days: 30

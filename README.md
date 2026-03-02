@@ -238,7 +238,7 @@ npx playwright show-trace trace.zip
 ### Using Page Object Model
 
 ```javascript
-import { expect, test } from '../../fixtures/enterpriseFixtures.js';
+import { expect, test } from '../../fixtures/sharedFixtures.js';
 import AcceptJobPage from '../../pageObjects/enterprise/Administration/acceptJob.po.js';
 
 test('My test', async ({ authenticatedPage }) => {
@@ -277,3 +277,24 @@ Configure in `playwright.config.js`:
 ```javascript
 retries: process.env.CI ? 2 : 0;
 ```
+
+### Environment Mapping & Project Selection
+
+The framework automatically maps `TEST_ENV` to the correct Playwright project:
+
+- `TEST_ENV=first_general` → Playwright project: `FirstGeneral`
+- `TEST_ENV=paul_devis` → Playwright project: `PaulDevis`
+- `TEST_ENV=service_master` → Playwright project: `ServiceMaster`
+- `TEST_ENV=evans` → Playwright project: `EvansProduction`
+
+Only the selected environment is authenticated and tested. This speeds up test runs and ensures isolation.
+
+### Report Naming
+
+Test reports are named using the initials of the selected environment. For example:
+- `first_general` → `FG-...`
+- `service_master` → `SM-...`
+- `paul_devis` → `PD-...`
+- `evans` → `E-...`
+
+This is handled automatically based on your `.env` configuration.

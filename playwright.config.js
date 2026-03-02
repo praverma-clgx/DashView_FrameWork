@@ -6,16 +6,28 @@ import { browserConfig } from './config/browser.config.js';
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load environment variables from .env file
+dotenv.config({ path: resolve(__dirname, '.env') });
 
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
 
 // Generate timestamp for report file names
-const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+const envInitials = (process.env.TEST_ENV || 'unknown')
+  .split(/[_-\s]+/)
+  .filter(Boolean)
+  .map((part) => part[0]?.toUpperCase() || '')
+  .join('');
+const timestamp = `${envInitials}-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5)}`;
 
 export default defineConfig({
   testDir: './tests',
@@ -38,22 +50,22 @@ export default defineConfig({
   /* Run tests in parallel - optimized for CI and local */
   workers: process.env.CI ? 2 : 1, // Use 2 workers in CI, 1 locally
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  // reporter: process.env.CI
-  //   ? [
-  //       ['html', { outputFolder: `playwright-report/report-${timestamp}` }],
-  //       ['json', { outputFile: `test-results/results-${timestamp}.json` }],
-  //       ['list'],
-  //     ]
-  //   : [
-  //       [
-  //         'html',
-  //         {
-  //           open: 'never',
-  //           outputFolder: `playwright-report/report-${timestamp}`,
-  //         },
-  //       ],
-  //       ['list'],
-  //     ],
+  reporter: process.env.CI
+    ? [
+        ['html', { outputFolder: `playwright-report/report-${timestamp}` }],
+        ['json', { outputFile: `test-results/results-${timestamp}.json` }],
+        ['list'],
+      ]
+    : [
+        [
+          'html',
+          {
+            open: 'never',
+            outputFolder: `playwright-report/report-${timestamp}`,
+          },
+        ],
+        ['list'],
+      ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
@@ -91,20 +103,40 @@ export default defineConfig({
   /* Global teardown - browser closes automatically after all tests */
   projects: [
     {
-      name: 'setup-job-number',
-      testMatch: 'tests/Enterprise/00_Setup_JobNumber/getJobNumber.spec.js',
-      fullyParallel: false, // Run setup test sequentially
-      retries: 1,
+      name: 'ServiceMaster',
+      testMatch: '**/ServiceMaster/**/*.spec.js',
+      fullyParallel: true,
+      retries: process.env.CI ? 1 : 0,
+      use: {
+        storageState: '.auth/servicemaster.json',
+      },
     },
     {
-      name: 'enterprise-chromium',
-      testMatch: '**/Enterprise/**/*.spec.js',
-      testIgnore: 'tests/Enterprise/00_Setup_JobNumber/getJobNumber.spec.js',
-      fullyParallel: true, // Run tests in parallel
-      dependencies: ['setup-job-number'],
+      name: 'FirstGeneral', 
+      testMatch: '**/FirstGeneral/**/*.spec.js',
+      fullyParallel: true,
+      retries: process.env.CI ? 1 : 0,
       use: {
-        storageState: '.auth/enterprise.json',
-      },
+        storageState: '.auth/firstgeneral.json',
+      } 
+    },
+    {
+      name: 'PaulDevis', 
+      testMatch: '**/PaulDevis/**/*.spec.js',
+      fullyParallel: true,
+      retries: process.env.CI ? 1 : 0,
+      use: {
+        storageState: '.auth/pauldevis.json',
+      } 
+    },
+    {
+      name: 'Evans', 
+      testMatch: '**/Evans/**/*.spec.js',
+      fullyParallel: true,
+      retries: process.env.CI ? 1 : 0,
+      use: {
+        storageState: '.auth/evans.json',
+      } 
     },
     // Uncomment if you need to test on other browsers
     // {

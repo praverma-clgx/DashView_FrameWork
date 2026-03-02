@@ -16,8 +16,8 @@ export function shouldSkipInEnvironment(...allowedEnvironments) {
   // Check if production URL
   const isProd =
     baseUrl.includes('first_general') || baseUrl.includes('fgs-ngs.net') || currentEnv === 'first_general';
-  const isPaulDavis =
-    baseUrl.toLowerCase().includes('pauldavis') || currentEnv.toLowerCase() === 'pauldavis';
+  const isPaulDevis =
+    baseUrl.toLowerCase().includes('pauldevis') || currentEnv.toLowerCase() === 'pauldevis';
   const isServiceMaster =
     baseUrl.toLowerCase().includes('servicemaster') || currentEnv.toLowerCase() === 'servicemaster';
   const isEvans =
@@ -32,7 +32,7 @@ export function shouldSkipInEnvironment(...allowedEnvironments) {
   if (isProd && !allowedEnvironments.includes('first_general')) {
     return true;
   }
-  if (isPaulDavis && !allowedEnvironments.includes('pauldavis')) {
+  if (isPaulDevis && !allowedEnvironments.includes('pauldevis')) {
     return true;
   }
   if (isServiceMaster && !allowedEnvironments.includes('servicemaster')) {
@@ -45,13 +45,13 @@ export function shouldSkipInEnvironment(...allowedEnvironments) {
   return false;
 }
 /**
- * Check if running in Paul Davis environment
+ * Check if running in Paul Devis environment
  * @returns {boolean}
  */
-export function isPaulDavis() {
+export function isPaulDevis() {
   const baseUrl = config.enterprise?.baseUrl || '';
   const env = process.env.ENV || '';
-  return baseUrl.toLowerCase().includes('pauldavis') || env.toLowerCase() === 'pauldavis';
+  return baseUrl.toLowerCase().includes('pauldevis') || env.toLowerCase() === 'pauldevis';
 }
 
 /**

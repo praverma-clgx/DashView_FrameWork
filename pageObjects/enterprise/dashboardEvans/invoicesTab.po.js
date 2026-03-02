@@ -335,7 +335,6 @@ class DashboardInvoicesTabPage {
       DashboardInvoicesTabLocators.backToSlideBoardButton,
     );
     await backToSlideBoardButton.click();
-    await this.page.waitForLoadState('networkidle');
   }
 
   // Fill invoice memo field
