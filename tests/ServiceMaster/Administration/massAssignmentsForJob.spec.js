@@ -28,11 +28,6 @@ test('Manage Assignments For Job Page', async ({ authenticatedPage }) => {
   await expect(jobListGridText).toBeVisible();
   await expect(jobListGridText).toHaveText(/^\s*Job List\s*$/);
 
-  // // Verify Show Admin Jobs Grid text is visible
-  // const showAdminJobsGridText = await massAssignmentsPage.verifyShowAdminJobsGridText();
-  // await expect(showAdminJobsGridText).toBeVisible();
-  // await expect(showAdminJobsGridText).toHaveText(/^\s*Show Admin Jobs\s*$/);
-
   // Verify Job Number grid column is visible
   const jobNumberGridColumn = await massAssignmentsPage.verifyJobNumberGridColumn();
   await expect(jobNumberGridColumn).toBeVisible();

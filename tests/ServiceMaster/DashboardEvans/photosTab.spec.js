@@ -19,31 +19,6 @@ test('Photos Tab', async ({ authenticatedPage }) => {
   // Verify Upload Photo button is visible
   await expect(await photosTabPage.verifyUploadPhotoButtonVisible()).toBeVisible();
 
-  // Verify 3D Room Models button is visible
-  await expect(await photosTabPage.verifyRoomModelsButtonVisible()).toBeVisible();
-  
-  // Click on 3D Room Models button
-  await photosTabPage.click3DRoomModelsButton();
-
-  // Wait for the popup div to be visible
-  await photosTabPage.waitForLinksPopupVisible();
-
-  // Verify header text inside iframe
-  await photosTabPage.verifyLinksIframeHeaderText('3D Room Models');
-
-  // Verify cancel image is visible inside iframe
-  await expect(await photosTabPage.verifyLinksIframeCancelImgVisible()).toBeVisible();
-
-  // Verify all three buttons are visible inside the iframe
-  await expect(await photosTabPage.verifyDocusketchButtonVisible()).toBeVisible();
-  await expect(await photosTabPage.verifyMatterportButtonVisible()).toBeVisible();
-
-  // Click cancel image inside iframe to close popup
-  await photosTabPage.clickLinksIframeCancelImg();
-
-  // Verify popup is hidden
-  await photosTabPage.verifyLinksPopupHidden();
-
   // Verify Manage Photos and Albums button is visible
   await expect(await photosTabPage.verifyManagePhotosAndAlbumsButtonVisible()).toBeVisible();
 

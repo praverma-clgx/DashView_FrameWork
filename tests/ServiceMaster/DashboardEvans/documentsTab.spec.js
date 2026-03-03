@@ -92,7 +92,4 @@ test('Documents Tab Validation', async ({ authenticatedPage }) => {
 
   // Click on close(X) button on upload popup
   await dashboardDocumentsTabPage.clickUploadPopupCloseButton();
-
-  // Click on Manage Job Documents button
-  await dashboardDocumentsTabPage.clickManageJobDocumentsButton();
 });

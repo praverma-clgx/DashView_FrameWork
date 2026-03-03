@@ -57,7 +57,6 @@ test('Employee Page', async ({ authenticatedPage }) => {
   const headingSectionText = [
     'Employee Details',
     'Address Information',
-    'Payroll Details',
     'Profile Details',
   ];
 

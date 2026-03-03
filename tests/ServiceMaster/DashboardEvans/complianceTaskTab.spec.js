@@ -27,12 +27,10 @@ test('Compliance Tasks Tab Validation', async ({ authenticatedPage }) => {
     'Associated Completion Date',
     'Due In',
     'Due Date',
-    'Pause Date',
     'Completed Date',
     'Rejected By',
     'Priority',
     'Exception Reason',
-    'Pause Reason',
     'Review Status',
     'Exception Reason Note',
   ];

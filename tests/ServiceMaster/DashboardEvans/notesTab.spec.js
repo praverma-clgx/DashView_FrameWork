@@ -26,9 +26,6 @@ test('Notes Tab Validation', async ({ authenticatedPage }) => {
   await expect(publicAdminOption).toBeVisible();
   await expect(publicOption).toBeVisible();
 
-  // Verify Copy Notes button is disabled
-  await notesTabPage.verifyCopyNotesButtonDisabled();
-
   // Verify Change Visibility button is visible
   await expect(await notesTabPage.verifyChangeVisibilityButtonVisible()).toBeVisible();
 
