@@ -10,9 +10,10 @@ const EnterpriseLoginPageLocators = {
 import { config } from '../../../config/environment.config.js';
 
 class EnterpriseLoginPage {
-  constructor(page) {
+  constructor(page, enterpriseConfig) {
     this.page = page;
-    this.url = config.enterprise.baseUrl;
+    this.enterpriseConfig = enterpriseConfig || config.enterprise;
+    this.url = this.enterpriseConfig.baseUrl;
 
     if (!this.url) {
       throw new Error(
@@ -48,7 +49,7 @@ class EnterpriseLoginPage {
     await this.page.waitForURL(
       (url) => {
         const urlString = url.toString();
-        return !urlString.includes('Login.aspx') || urlString.includes('uPostLogin.aspx');
+        return !/login\.aspx/i.test(urlString) || /upostlogin\.aspx/i.test(urlString);
       },
       { timeout: 60000 },
     );

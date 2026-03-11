@@ -4,9 +4,14 @@ export class EstimateTrackerPage extends BasePage {
   constructor(page) {
     super(page);
 
-    this.estimateTrackerIcon = page.locator(
-      '#AccountingHeaderLinkPanel > div:nth-child(4) > a > img',
-    );
+    this.accountingHeaderPanel = page.locator('#AccountingHeaderLinkPanel');
+    this.estimateTrackerLink = this.accountingHeaderPanel
+      .locator('a')
+      .filter({ hasText: /Estimate\s*Tracker/i })
+      .first();
+    this.estimateTrackerIcon = this.accountingHeaderPanel
+      .locator('img[alt="Estimate Tracker"], a[title*="Estimate Tracker" i] img')
+      .first();
 
     // Tabs
     this.uploadedOnlyTab = page.locator(
@@ -39,8 +44,28 @@ export class EstimateTrackerPage extends BasePage {
   }
 
   async openEstimateTracker() {
-    await this.page.locator('#AccountingHeaderLinkPanel').waitFor({ state: 'visible' });
-    await this.estimateTrackerIcon.click();
+    await this.accountingHeaderPanel.waitFor({ state: 'visible' });
+
+    const hasLink = await this.estimateTrackerLink.isVisible().catch(() => false);
+    if (hasLink) {
+      await this.estimateTrackerLink.click();
+      return;
+    }
+
+    const hasIcon = await this.estimateTrackerIcon.isVisible().catch(() => false);
+    if (hasIcon) {
+      await this.estimateTrackerIcon.click();
+      return;
+    }
+
+    const availableHeaderLinks = await this.accountingHeaderPanel
+      .locator('a')
+      .allInnerTexts()
+      .catch(() => []);
+
+    throw new Error(
+      `Estimate Tracker link/icon not found in Accounting header. Available links: ${availableHeaderLinks.join(' | ')}`,
+    );
   }
 
   async clickTab(tabName) {

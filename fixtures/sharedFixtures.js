@@ -13,27 +13,45 @@ export const test = base.extend({
     // Determine storage state path based on project name
     const projectName = testInfo.project.name.toLowerCase();
     const storageStatePath = `.auth/${projectName}.json`;
-    
-    console.log(`🔧 Using storage state: ${storageStatePath} for project: ${testInfo.project.name}`);
+    const projectToConfigKey = {
+      servicemaster: 'service_master',
+      firstgeneral: 'first_general',
+      pauldevis: 'paul_devis',
+      evans: 'evans',
+    };
+    const configKey = projectToConfigKey[projectName];
+    const envConfig = configKey
+      ? config.environments[configKey]
+      : { enterprise: config.enterprise };
+
+    console.log(
+      `🔧 Using storage state: ${storageStatePath} for project: ${testInfo.project.name}`,
+    );
 
     // Navigate to base URL to activate the storage state session
-    await page.goto(config.enterprise.baseUrl, { timeout: 500000 });
+    await page.goto(envConfig.enterprise.baseUrl, { timeout: 500000 });
     await page.waitForLoadState('networkidle');
 
-    // Check if we're on the actual login page (not post-login redirect)
+    // Check if we're on login page (case-insensitive, with URL + form-field fallback)
     const currentUrl = page.url();
-    const isOnLoginPage =
-      currentUrl.includes('Login.aspx') && !currentUrl.includes('uPostLogin.aspx');
+    const isLoginUrl = /login\.aspx/i.test(currentUrl);
+    const isPostLoginUrl = /upostlogin\.aspx/i.test(currentUrl);
+    const hasLoginForm = await page
+      .locator('#txtDashId, #txtUserName, #txtPassword, #btnLogIn')
+      .first()
+      .isVisible()
+      .catch(() => false);
+    const isOnLoginPage = (isLoginUrl && !isPostLoginUrl) || hasLoginForm;
 
     if (isOnLoginPage) {
       console.log(`⚠ ${testInfo.project.name} session expired or invalid, re-authenticating...`);
 
       // Re-authenticate
-      const enterpriseLoginPage = new EnterpriseLoginPage(page);
+      const enterpriseLoginPage = new EnterpriseLoginPage(page, envConfig.enterprise);
       await enterpriseLoginPage.login(
-        config.enterprise.credentials.companyId,
-        config.enterprise.credentials.username,
-        config.enterprise.credentials.password,
+        envConfig.enterprise.credentials.companyId,
+        envConfig.enterprise.credentials.username,
+        envConfig.enterprise.credentials.password,
       );
 
       // Save new auth state to project-specific file

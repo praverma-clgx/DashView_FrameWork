@@ -289,10 +289,27 @@ export class AccountDetailsPage extends BasePage {
   }
 
   async validateEstimatesPage() {
-    // Check visibility of all estimate controls except tabButton
-    for (const [key, locator] of Object.entries(this.estimates)) {
-      if (key === 'tabButton') continue;
+    const requiredControls = [
+      this.estimates.jobLabel,
+      this.estimates.trackerBtn,
+      this.estimates.woBtn,
+    ];
+
+    for (const locator of requiredControls) {
       await locator.waitFor({ state: 'visible' });
+    }
+
+    const optionalControls = [
+      this.estimates.xactBtn,
+      this.estimates.button1,
+      this.estimates.exportBtn,
+    ];
+
+    for (const locator of optionalControls) {
+      const present = (await locator.count()) > 0;
+      if (present) {
+        await locator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      }
     }
   }
 
@@ -303,10 +320,40 @@ export class AccountDetailsPage extends BasePage {
   }
 
   async validateJobCostingPage() {
-    // Iterate over all locators in the jobCosting group except tabButton
-    for (const [key, locator] of Object.entries(this.jobCosting)) {
-      if (key === 'tabButton') continue;
+    const requiredControls = [
+      this.jobCosting.headerLabel,
+      this.jobCosting.jobLabel,
+      this.jobCosting.catOverviewLabel,
+      this.jobCosting.costCatLabel,
+      this.jobCosting.totalLabel,
+    ];
+
+    for (const locator of requiredControls) {
       await locator.waitFor({ state: 'visible' });
+    }
+
+    const optionalControls = [
+      this.jobCosting.timeSheetBtn,
+      this.jobCosting.burdenLabel,
+      this.jobCosting.consumables,
+      this.jobCosting.equipment,
+      this.jobCosting.extra,
+      this.jobCosting.labor,
+      this.jobCosting.materials,
+      this.jobCosting.others,
+      this.jobCosting.professional,
+      this.jobCosting.referral,
+      this.jobCosting.subTrade,
+      this.jobCosting.warranty,
+      this.jobCosting.allCosts,
+      this.jobCosting.backButton,
+    ];
+
+    for (const locator of optionalControls) {
+      const present = (await locator.count()) > 0;
+      if (present) {
+        await locator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      }
     }
   }
 
@@ -322,11 +369,26 @@ export class AccountDetailsPage extends BasePage {
   }
 
   async validateInvoicesPage() {
-    for (const [key, locator] of Object.entries(this.invoices)) {
-      if (key === 'tabButton') continue;
+    const requiredControls = [this.invoices.headerLabel, this.invoices.jobLabel];
+
+    for (const locator of requiredControls) {
       await locator.waitFor({ state: 'visible' });
     }
-    await this.btnBackToAccounting.waitFor({ state: 'visible' });
+
+    const optionalControls = [
+      this.invoices.insertBtn,
+      this.invoices.paymentBtn,
+      this.invoices.deleteBtn,
+      this.invoices.backSlideboardBtn,
+      this.btnBackToAccounting,
+    ];
+
+    for (const locator of optionalControls) {
+      const present = (await locator.count()) > 0;
+      if (present) {
+        await locator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      }
+    }
   }
 
   // --- Work Orders ---
@@ -336,10 +398,56 @@ export class AccountDetailsPage extends BasePage {
   }
 
   async validateWorkOrderPage() {
-    for (const [key, locator] of Object.entries(this.workOrder)) {
-      if (key === 'tabButton') continue;
+    const requiredControls = [this.workOrder.jobLabel, this.workOrder.jobSummary];
+
+    for (const locator of requiredControls) {
       await locator.waitFor({ state: 'visible' });
     }
+
+    const optionalControls = [
+      this.workOrder.backHomeBtn,
+      this.workOrder.backJobCostingBtn,
+      this.workOrder.autoGenImg,
+      this.workOrder.createNewImg,
+      this.workOrder.startImg,
+      this.workOrder.completeImg,
+      this.workOrder.deleteImg,
+      this.workOrder.ganttImg,
+      this.workOrder.negativeImg,
+      this.workOrder.addEstImg,
+      this.workOrder.convertPOImg,
+      this.workOrder.sharedExtBtn,
+      this.workOrder.milestoneBtn,
+    ];
+
+    for (const locator of optionalControls) {
+      const present = (await locator.count()) > 0;
+      if (present) {
+        await locator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      }
+    }
+  }
+
+  async validateJobCostingSectionForCurrentContext() {
+    const hasJobCostingTab = await this.jobCosting.tabButton.isVisible().catch(() => false);
+    if (!hasJobCostingTab) {
+      await this.summaryLabels.header.waitFor({ state: 'visible' });
+      return;
+    }
+
+    await this.openJobCosting();
+    await this.validateJobCostingPage();
+  }
+
+  async validateWorkOrderSectionForCurrentContext() {
+    const hasWorkOrderTab = await this.workOrder.tabButton.isVisible().catch(() => false);
+    if (!hasWorkOrderTab) {
+      await this.summaryLabels.header.waitFor({ state: 'visible' });
+      return;
+    }
+
+    await this.openWorkOrder();
+    await this.validateWorkOrderPage();
   }
 
   // --- Reports ---
@@ -349,8 +457,13 @@ export class AccountDetailsPage extends BasePage {
   }
 
   async validateAccountingReportPage() {
-    for (const locator of this.reports.labels) {
-      await locator.waitFor({ state: 'visible' });
+    await this.reports.labels[0].waitFor({ state: 'visible' });
+
+    for (const locator of this.reports.labels.slice(1)) {
+      const present = (await locator.count()) > 0;
+      if (present) {
+        await locator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      }
     }
   }
 

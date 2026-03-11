@@ -27,9 +27,19 @@ export class NotesPage extends BasePage {
     // Standard notes list
     this.standardNoteItem = this.notesDialogFrame.locator('#ctl02_lstStandardNotes_i3');
 
-    // Individual contacts checkboxes
+    // Individual contacts checkboxes (System Participants)
     this.individualContactsCheckboxes = this.notesDialogFrame.locator(
-      'input[type="checkbox"][name*="IndividualContacts"]:not([disabled])',
+      'input[type="checkbox"][name*="chkEmailNoteParticipants"]',
+    );
+
+    // Company contacts checkboxes (System Participants)
+    this.companyContactsCheckboxes = this.notesDialogFrame.locator(
+      'input[type="checkbox"][name*="chkCompanyContactEmailNoteParticipants"]',
+    );
+
+    // Custom participants checkboxes
+    this.customParticipantsCheckboxes = this.notesDialogFrame.locator(
+      'input[type="checkbox"][name*="EmailNoteCustomParticipantsCheckBox"]',
     );
 
     // Save button

@@ -114,6 +114,49 @@ export class WorkOrderPurchaseOrderPage extends BasePage {
       '#ctl00_ContentPlaceHolder1_gvInvoice_ctl00_ctl02_ctl00_ExportToExcelButton',
     );
     this.backToWorkOrderButton = page.locator('#ctl00_ContentPlaceHolder1_btnWorkOrder');
+
+    // --- Read-Only UI Validation Selectors ---
+    this.workOrderHeader = page.getByText(/Work Orders\s+For\s+Job\s+Number:/i).first();
+    this.toolbarButtonsById = {
+      convertEstimateToWorkOrder: page.locator('#ctl00_ContentPlaceHolder1_imgAutoGenerateWo'),
+      createNewWorkOrder: page.locator('#ctl00_ContentPlaceHolder1_imgCreateNewWo'),
+      startWorkOrder: page.locator('#ctl00_ContentPlaceHolder1_imgActualWorkOrderStart'),
+      completeWorkOrder: page.locator('#ctl00_ContentPlaceHolder1_imgCompleteWo'),
+      deleteWorkOrder: page.locator('#ctl00_ContentPlaceHolder1_imgDeleteWo'),
+      schedule: page.locator('#ctl00_ContentPlaceHolder1_imgJobGantchart'),
+      showNegativeLineItems: page.locator('#ctl00_ContentPlaceHolder1_imgNegetivelineItem'),
+      addViewEstimate: page.locator('#ctl00_ContentPlaceHolder1_imgaddEstimate'),
+      convertToPurchaseOrder: page.locator('#ctl00_ContentPlaceHolder1_imgConvertPurchaseOrder'),
+      createWorkOrderSelected: page.locator('#ctl00_ContentPlaceHolder1_createWOSelected'),
+      reschedule: page.locator('#ctl00_ContentPlaceHolder1_ImageButton2'),
+      applyEstimateChanges: page.locator('#ctl00_ContentPlaceHolder1_ImageButton4'),
+      printProductionSummary: page.locator('#ctl00_ContentPlaceHolder1_imgPrintProductionSummary'),
+      shareUnshareExternally: page.locator(
+        '#ctl00_ContentPlaceHolder1_WorkOrderSharedExternallyImageButton',
+      ),
+      addMilestone: page.locator('#ctl00_ContentPlaceHolder1_MilestoneImageButton'),
+    };
+
+    this.toolbarLabelsById = {
+      convertEstimateToWorkOrder: page.locator('#ctl00_ContentPlaceHolder1_label4'),
+      createNewWorkOrder: page.locator('#ctl00_ContentPlaceHolder1_label5'),
+      start: page.locator('#ctl00_ContentPlaceHolder1_label70'),
+      complete: page.locator('#ctl00_ContentPlaceHolder1_label6'),
+      delete: page.locator('#ctl00_ContentPlaceHolder1_label7'),
+      schedule: page.locator('#ctl00_ContentPlaceHolder1_label8'),
+      showNegativeLineItems: page.locator('#ctl00_ContentPlaceHolder1_label9'),
+      addViewEstimate: page.locator('#ctl00_ContentPlaceHolder1_label10'),
+      printAll: page.locator('#ctl00_ContentPlaceHolder1_label11'),
+      convertToPurchaseOrder: page.locator('#ctl00_ContentPlaceHolder1_label12'),
+      createWorkOrderSelected: page.locator('#ctl00_ContentPlaceHolder1_Label14'),
+      reschedule: page.locator('#ctl00_ContentPlaceHolder1_Label15'),
+      applyEstimateChanges: page.locator('#ctl00_ContentPlaceHolder1_Label17'),
+      printProductionSummary: page.locator('#ctl00_ContentPlaceHolder1_label68'),
+      shareUnshareExternally: page.locator(
+        '#ctl00_ContentPlaceHolder1_WorkOrderShareExternallyLabel',
+      ),
+      addMilestone: page.locator('#ctl00_ContentPlaceHolder1_AddMilestoneLabel'),
+    };
   }
 
   // ================= ACTIONS =================
@@ -122,6 +165,44 @@ export class WorkOrderPurchaseOrderPage extends BasePage {
     await this.workOrderPoLink.click();
     await this.page.waitForLoadState('networkidle');
     await this.toolbar.convertEstimate.waitFor({ state: 'visible' });
+  }
+
+  async validatePageShell(expect) {
+    await expect(this.workOrderHeader).toBeVisible();
+    await expect(this.grid).toBeVisible();
+    await expect(this.searchBox).toBeVisible();
+  }
+
+  async validateJobSummaryAndMainToolbar(expect) {
+    for (const [key, locator] of Object.entries(this.jobSummaryLabels)) {
+      await expect.soft(locator, `Job Summary '${key}' should be visible`).toBeVisible();
+    }
+
+    for (const [key, locator] of Object.entries(this.toolbar)) {
+      await expect.soft(locator, `Toolbar icon '${key}' should be visible`).toBeVisible();
+    }
+
+    await expect.soft(this.convertEstimateToWorkOrderButton).toBeVisible({ timeout: 10000 });
+  }
+
+  async validateExtendedToolbarUI(expect) {
+    for (const [key, locator] of Object.entries(this.toolbarButtonsById)) {
+      await expect.soft(locator, `Toolbar button '${key}' should be visible`).toBeVisible({
+        timeout: 10000,
+      });
+    }
+
+    for (const [key, locator] of Object.entries(this.toolbarLabelsById)) {
+      await expect.soft(locator, `Toolbar label '${key}' should be visible`).toBeVisible({
+        timeout: 10000,
+      });
+    }
+  }
+
+  async validateWorkOrder(expect) {
+    await this.validatePageShell(expect);
+    await this.validateJobSummaryAndMainToolbar(expect);
+    await this.validateExtendedToolbarUI(expect);
   }
 
   // --- Workflow: Create New Work Order ---

@@ -46,6 +46,9 @@ export class EmployeePage extends BasePage {
 
     // Employee Search/List Page - No Records Message
     this.noRecordsRow = page.locator('tr.rgNoRecords');
+
+    //sectionHeading locator
+    this.sectionHeading = '.Heading_blue_s';
   }
 
   /**
@@ -288,5 +291,14 @@ export class EmployeePage extends BasePage {
     await this.createEmployeeQuickLink.waitFor({ state: 'visible', timeout: 5000 }); // Wait for menu to expand
     await this.createEmployeeQuickLink.click();
     await this.page.waitForLoadState('networkidle');
+  }
+
+  // Verify section headings are visible
+  async verifySectionHeading(sectionText) {
+    const section = this.page.locator(this.sectionHeading, {
+      hasText: new RegExp(`^\\s*${sectionText}\\s*$`),
+    });
+    await section.waitFor({ state: 'visible' });
+    return section;
   }
 }

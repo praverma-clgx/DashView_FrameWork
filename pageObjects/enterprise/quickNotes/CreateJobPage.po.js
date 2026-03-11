@@ -41,6 +41,9 @@ export class CreateJobPage extends BasePage {
 
     //delete job
     this.deleteJobButton = page.getByRole('button', { name: 'Delete Job' });
+
+    //title
+    this.jobTitles = '.DashTitle';
   }
   /**
    * Waits for the general loading spinner to disappear (processing complete)
@@ -211,5 +214,11 @@ export class CreateJobPage extends BasePage {
     await this.page.keyboard.press('Escape');
 
     return optionExists;
+  }
+  // Verify section headings are visible
+  async verifySectionTitles(jobTitle) {
+    const section = this.page.locator(this.jobTitles).filter({ hasText: jobTitle }).first();
+    await section.waitFor({ state: 'visible' });
+    return section;
   }
 }

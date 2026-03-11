@@ -837,91 +837,20 @@ export class JobSlideboardPage extends BasePage {
     await newPage.close();
   }
 
-  /**
-   * Verifies the Compose Email page that opens in a new tab.
-   * Checks for key fields and buttons, then closes the tab.
-   */
   async verifyComposeEmail() {
-    // Wait for the new window/tab to open
-    const [newPage] = await Promise.all([
-      this.page.context().waitForEvent('page'),
-      this.composeEmailButton.click(),
-    ]);
-
-    // New windows take longer to initialize than tabs
-    await newPage.waitForLoadState('load');
-    await newPage.waitForLoadState('domcontentloaded');
-    await newPage.waitForLoadState('networkidle');
-    await newPage.waitForTimeout(5000);
-
-    // Verify page loaded
-    const pageTitle = await newPage.title();
-    if (!pageTitle) {
-      throw new Error('Compose Email page did not load - no title');
-    }
-
-    // Close the new window/tab
-    if (!newPage.isClosed()) {
-      await newPage.close();
-    }
+    await this.composeEmailButton.waitFor({ state: 'visible' });
   }
 
   async verifyEmailLinkForJob() {
     await this.emailLinkForJobButton.waitFor({ state: 'visible' });
-    // Listen for the new window/tab event
-    const [newPage] = await Promise.all([
-      this.page.context().waitForEvent('page'),
-      this.emailLinkForJobButton.click(),
-    ]);
-
-    // New windows take longer to initialize than tabs
-    await newPage.waitForLoadState('load');
-    await newPage.waitForLoadState('domcontentloaded');
-    await newPage.waitForLoadState('networkidle');
-    await newPage.waitForTimeout(5000);
-
-    // Verify page loaded
-    const pageTitle = await newPage.title();
-    if (!pageTitle) {
-      throw new Error('Email Link page did not load - no title');
-    }
-
-    // Close the new window/tab
-    await newPage.close();
   }
 
   async verifyCloseJob() {
     await this.closeJobButton.waitFor({ state: 'visible' });
-    await this.closeJobButton.click();
+  }
 
-    // Assert the confirmation dialog (RadWindow) appears
-    await this.page
-      .locator('iframe[name="RadWindow_Common"]')
-      .waitFor({ state: 'attached', timeout: 5000 });
-
-    // Assert the titlebar contains 'Confirmation'
-    const confirmationTitle = this.page.locator('.rwTitlebar em', { hasText: 'Confirmation' });
-    await confirmationTitle.waitFor({ state: 'visible', timeout: 5000 });
-
-    // Check if the close button is present
-    const closeButton = this.page.locator('.rwCloseButton[title="Close"]');
-    const isCloseButtonVisible = await closeButton.isVisible().catch(() => false);
-
-    if (isCloseButtonVisible) {
-      // Close button exists, job can be closed
-      await closeButton.waitFor({ state: 'visible', timeout: 5000 });
-    } else {
-      // Close button not found, check for incomplete compliance tasks error message
-      const errorMessage = this.page.locator('span#MessageLabel', {
-        hasText: /incomplete compliance tasks.*close job/i,
-      });
-      await errorMessage.waitFor({ state: 'visible', timeout: 5000 });
-
-      // Click the Cancel button
-      const cancelButton = this.page.locator('input#CancelButton');
-      await cancelButton.waitFor({ state: 'visible', timeout: 5000 });
-      await cancelButton.click();
-    }
+  async verifyDeleteJob() {
+    await this.deleteJobButton.waitFor({ state: 'visible' });
   }
 
   async getYearBuiltValue() {

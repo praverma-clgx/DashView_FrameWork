@@ -2,8 +2,8 @@ import { BasePage } from '../basePage/enterpriseBasePage.po.js';
 export class CompanyPage extends BasePage {
   constructor(page) {
     super(page);
-    this.quickNotesIcon = page.locator('#RAD_SLIDING_PANE_ICON_ctl00_ctl44_QuickMenuSlidingPane');
-    this.createCompanyQuickLink = page.locator('td').filter({ hasText: 'Company' }).first();
+    this.quickNotesIcon = '#RAD_SLIDING_PANE_ICON_ctl00_ctl44_QuickMenuSlidingPane';
+    this.createCompanyQuickLink = '//tr[td[normalize-space()="Company"]]//span';
     this.contactManagerBtn = 'text="Contact Manager"';
     this.addNewCompanyBtn = '#ctl00_ContentPlaceHolder1_companyControl_buttonAddRecordCompany';
     this.companyTypeDropdown = '#ctl00_ContentPlaceHolder1_ddlCompanyType_Input';
@@ -68,12 +68,11 @@ export class CompanyPage extends BasePage {
   async filterByCompanyName(companyName) {
     const filter = this.page.locator(this.companyNameFilter).first();
     await filter.fill(companyName);
-    await this.page.waitForTimeout(500);
+    await this.page.keyboard.press('Enter');
     await filter.press('Enter');
 
     // Wait for grid to update with filtered results
     await this.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
-    await this.page.waitForTimeout(1000); // Additional wait for grid re-render
   }
 
   // Wait for company rows to be visible and return the count
@@ -103,8 +102,8 @@ export class CompanyPage extends BasePage {
     return await companyCells.count();
   }
   async openQuickNotesCreateCompany() {
-    await this.quickNotesIcon.click();
-    await this.createCompanyQuickLink.click();
+    await this.page.locator(this.quickNotesIcon).click();
+    await this.page.locator(this.createCompanyQuickLink).click();
     await this.page.waitForLoadState('networkidle');
   }
 }

@@ -28,6 +28,17 @@ const allAuthConfigs = [
   }
 ];
 
+function ensureStorageStateFile(authPath) {
+  if (!fs.existsSync(authPath)) {
+    const emptyState = {
+      cookies: [],
+      origins: [],
+    };
+    fs.writeFileSync(authPath, JSON.stringify(emptyState, null, 2), 'utf-8');
+    console.log(`📝 Created placeholder auth state: ${authPath}`);
+  }
+}
+
 /**
  * Determine which projects are being run based on command line arguments and environment variables
  * @returns {Array} Array of project names being executed
@@ -48,24 +59,7 @@ function getActiveProjects() {
     return [singleProject];
   }
 
-  // Check TEST_ENV and map it to the corresponding project (second priority)
-  const testEnv = process.env.TEST_ENV;
-  if (testEnv) {
-    const envToProjectMap = {
-      'first_general': 'FirstGeneral',
-      'paul_devis': 'PaulDevis', 
-      'service_master': 'ServiceMaster',
-      'evans': 'Evans'
-    };
-    
-    const mappedProject = envToProjectMap[testEnv];
-    if (mappedProject) {
-      console.log(`🎯 Using TEST_ENV (${testEnv}) mapped to project: ${mappedProject}`);
-      return [mappedProject];
-    }
-  }
-
-  // Parse command line arguments more carefully (third priority)
+  // Parse command line arguments
   const args = process.argv;
   const projects = [];
 
@@ -119,11 +113,9 @@ function getActiveProjects() {
     }
   }
 
-  // Last resort: setup auth for all projects (but warn user)
-  console.log(`⚠ No specific project detected from TEST_ENV, PLAYWRIGHT_PROJECT, or command line`);
-  console.log(`💡 Set TEST_ENV to one of: first_general, paul_devis, service_master, evans`);
-  console.log(`💡 Or set PLAYWRIGHT_PROJECT=ProjectName for explicit control`);
-  return allAuthConfigs.map(config => config.name);
+  // We'll do lazy auth in shared fixtures for only the project that actually runs.
+  console.log(`⚠ No specific project detected; using lazy per-project auth`);
+  return [];
 }
 
 /**
@@ -169,7 +161,7 @@ async function shouldRecreateAuthFile(authPath, envConfig) {
 
     // If not logged in, auth files are stale
     return !isLoggedIn;
-  } catch (error) {
+  } catch {
     // If validation fails, recreate auth
     console.log(`⚠ Auth validation failed for ${authPath}, recreating...`);
     return true;
@@ -201,7 +193,16 @@ async function globalSetup() {
   const authConfigs = getAuthConfigs();
   
   if (authConfigs.length === 0) {
-    console.log('⚠ No projects detected for authentication setup');
+    const authDir = '.auth';
+    fs.mkdirSync(authDir, { recursive: true });
+
+    // Fast path: ensure placeholder files exist for all projects so Playwright context creation never fails with ENOENT. 
+    // Actual login will occur lazily in shared fixture only for the project that is executed.
+    for (const authConfig of allAuthConfigs) {
+      ensureStorageStateFile(authConfig.authPath);
+    }
+
+    console.log('⚡ Skipping upfront multi-project login; auth will be created on-demand');
     return;
   }
 
@@ -209,6 +210,11 @@ async function globalSetup() {
 
   const authDir = '.auth';
   fs.mkdirSync(authDir, { recursive: true });
+
+  // Always ensure files exist so Playwright can create contexts without ENOENT.
+  for (const authConfig of authConfigs) {
+    ensureStorageStateFile(authConfig.authPath);
+  }
 
   // Check if existing auth files are valid
   const authRecreationNeeds = await shouldRecreateAuthFiles();
@@ -235,7 +241,7 @@ async function globalSetup() {
         await page.goto(envConfig.enterprise.baseUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
         // Use EnterpriseLoginPage for login functionality (it will use the already loaded page)
-        const loginPage = new EnterpriseLoginPage(page);
+        const loginPage = new EnterpriseLoginPage(page, envConfig.enterprise);
         await loginPage.login(
           envConfig.enterprise.credentials.companyId,
           envConfig.enterprise.credentials.username,
@@ -249,6 +255,8 @@ async function globalSetup() {
         console.log(`✓ ${authConfig.name} authentication saved to ${authConfig.authPath}`);
       } catch (error) {
         console.error(`❌ Failed to setup authentication for ${authConfig.name}: ${error.message}`);
+        // Keep a valid placeholder file to avoid storageState ENOENT failures.
+        ensureStorageStateFile(authConfig.authPath);
         // Continue with other environments even if one fails
       }
     } else {
