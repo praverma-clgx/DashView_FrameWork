@@ -250,6 +250,22 @@ test('My test', async ({ authenticatedPage }) => {
 });
 ```
 
+## 🤝 Collaboration and Pull Request Access
+
+If someone else opens a pull request and then sees that they **cannot push to the branch**, that is usually a GitHub permission issue rather than a problem in this test framework.
+
+- Only the branch owner and users with **write access** to this repository can push to a branch in this repository.
+- If the pull request comes from a **fork**, the PR author controls that branch. Maintainers can only push if the author enables **Allow edits by maintainers**.
+- If two contributors both need to push changes, the safest workflow is for each person to work from **their own branch or fork** and open/update the pull request from there.
+- Repository push permissions and protected branch rules are managed in **GitHub repository settings**, not in the test code in this repo.
+
+### Recommended fix when a contributor cannot push
+
+1. Confirm whether the PR branch lives in this repository or in the contributor's fork.
+2. If the branch is in this repository, ask a maintainer to grant the contributor the required **write/collaborator access**.
+3. If the branch is in a fork, ask the PR author to either push the change themselves or enable **Allow edits by maintainers** on the PR.
+4. If shared access is not available, create a new branch from the latest target branch and open a replacement PR from an account that can push to it.
+
 ## 🤝 Getting Help
 
 If you encounter issues:
