@@ -1,12 +1,22 @@
 import { test } from '../../../fixtures/sharedFixtures.js';
+import { expect } from '@playwright/test';
 import { ComplianceManagerPage } from '../../../pageObjects/enterprise/moreFg/complianceManager.po.js';
 
 test('Compliance Manager Page in More...', async ({ authenticatedPage }) => {
   const page = authenticatedPage;
   const complianceManagerPage = new ComplianceManagerPage(page);
 
-  // Navigate to Compliance Manager
-  await complianceManagerPage.navigateToComplianceManager();
+  // Hover over More... menu
+  const moreMenu = page.locator('span.rmText.rmExpandDown:has-text("More...")').first();
+  await expect(moreMenu).toBeVisible({ timeout: 10000 });
+  await moreMenu.hover();
+
+  // Click first Compliance Manager link (menuSubHeader — the section header entry)
+  const complianceManagerLink = page.locator('a.rmLink.menuSubHeader:has-text("Compliance Manager")').first();
+  await expect(complianceManagerLink).toBeVisible({ timeout: 90000 });
+  await complianceManagerLink.click();
+
+  await page.waitForLoadState('networkidle');
 
   // Validate Page Title
   await complianceManagerPage.validatePageTitle();

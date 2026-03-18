@@ -298,7 +298,12 @@ export class EmployeePage extends BasePage {
     const section = this.page.locator(this.sectionHeading, {
       hasText: new RegExp(`^\\s*${sectionText}\\s*$`),
     });
-    await section.waitFor({ state: 'visible' });
+    // Wait for the element to be in the DOM first
+    await section.waitFor({ state: 'attached', timeout: 15000 });
+    // Scroll it into view in case it's below the fold or in a collapsed container
+    await section.scrollIntoViewIfNeeded().catch(() => {});
+    // Now wait for it to be visible with a bounded timeout
+    await section.waitFor({ state: 'visible', timeout: 15000 });
     return section;
   }
 }
