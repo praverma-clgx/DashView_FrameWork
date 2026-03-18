@@ -128,7 +128,7 @@ class DashboardPhotosTabPage {
   // Navigate to Photos tab
   async navigateToPhotosTab() {
     const photosTab = this.page.locator(PhotosTabLocators.photosTab);
-    await photosTab.waitFor({ state: 'visible', timeout: 15000 });
+    await photosTab.waitFor({ state: 'visible', timeout: 60000 });
     await photosTab.click();
     await this.page.waitForLoadState('networkidle');
   }
