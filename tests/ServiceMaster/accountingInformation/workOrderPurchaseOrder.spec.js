@@ -1,5 +1,5 @@
 import { test, expect } from '../../../fixtures/sharedFixtures.js';
-import jobNumberData from '../../../testData/pauldevis/commonJobNumber.json' with { type: 'json' };
+import jobNumberData from '../../../testData/servicemaster/commonJobNumber.json' with { type: 'json' };
 import { searchJobNumber } from '../../../utils/searchJobNumber.js';
 import { WorkOrderPurchaseOrderPage } from '../../../pageObjects/enterprise/accountingInformation/WorkOrderPurchaseOrderPage.po.js';
 

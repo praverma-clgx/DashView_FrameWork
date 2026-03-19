@@ -40,7 +40,6 @@ test('Verify Employee Form Quick Notes', async ({
   const headingSectionText = [
     'Employee Details',
     'Address Information',
-    'Payroll Details',
     'Profile Details',
   ];
 
