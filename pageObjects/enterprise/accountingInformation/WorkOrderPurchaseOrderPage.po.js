@@ -131,9 +131,6 @@ export class WorkOrderPurchaseOrderPage extends BasePage {
       reschedule: page.locator('#ctl00_ContentPlaceHolder1_ImageButton2'),
       applyEstimateChanges: page.locator('#ctl00_ContentPlaceHolder1_ImageButton4'),
       printProductionSummary: page.locator('#ctl00_ContentPlaceHolder1_imgPrintProductionSummary'),
-      shareUnshareExternally: page.locator(
-        '#ctl00_ContentPlaceHolder1_WorkOrderSharedExternallyImageButton',
-      ),
       addMilestone: page.locator('#ctl00_ContentPlaceHolder1_MilestoneImageButton'),
     };
 
@@ -152,9 +149,6 @@ export class WorkOrderPurchaseOrderPage extends BasePage {
       reschedule: page.locator('#ctl00_ContentPlaceHolder1_Label15'),
       applyEstimateChanges: page.locator('#ctl00_ContentPlaceHolder1_Label17'),
       printProductionSummary: page.locator('#ctl00_ContentPlaceHolder1_label68'),
-      shareUnshareExternally: page.locator(
-        '#ctl00_ContentPlaceHolder1_WorkOrderShareExternallyLabel',
-      ),
       addMilestone: page.locator('#ctl00_ContentPlaceHolder1_AddMilestoneLabel'),
     };
   }
