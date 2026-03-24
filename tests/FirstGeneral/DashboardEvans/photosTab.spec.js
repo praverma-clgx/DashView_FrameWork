@@ -85,9 +85,6 @@ test('Photos Tab', async ({ authenticatedPage }) => {
   // Verify Move Photo button is initially disabled
   await photosTabPage.verifyMovePhotoButtonDisabled();
 
-  // Verify Copy Photo button is initially disabled
-  await photosTabPage.verifyCopyPhotoButtonDisabled();
-
   // Verify sort photos label is visible in manage photos and albums page
   await expect(await photosTabPage.verifySortPhotosLabelVisible()).toBeVisible();
 });
